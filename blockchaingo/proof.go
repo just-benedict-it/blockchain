@@ -77,8 +77,8 @@ func (pow *ProofOfWork) Validate() bool {
 func ToHex(num int64) []byte {
 
 	buff := new(bytes.Buffer)
-	// buff에 이진수의 데이터(num)를 write
-	// BigEndian -> 큰 비트부터 작성 vs LittleEndian
+	//BigEndian -> 큰 비트부터 작성 vs LittleEndian
+	//num을 이진표현으로 나타내는 함수
 	err := binary.Write(buff, binary.BigEndian, num)
 
 	if err != nil {
