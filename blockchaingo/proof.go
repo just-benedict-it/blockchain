@@ -5,10 +5,20 @@ import (
 	"crypto/sha256"
 	"encoding/binary"
 	"fmt"
-	"log"
 	"math"
 	"math/big"
 )
+
+// Take the data from the block
+
+// create a counter (nonce) which starts at 0
+
+// create a hash of the data plus the counter
+
+// check the hash to see if it meets a set of requirements
+
+// Requirements:
+// The First few bytes must contain 0s
 
 const Difficulty = 12
 
@@ -20,23 +30,23 @@ type ProofOfWork struct {
 func NewProof(b *Block) *ProofOfWork {
 	target := big.NewInt(1)
 	target.Lsh(target, uint(256-Difficulty))
-	pow := &ProofOfWork{b, target}
-	return pow
 
+	pow := &ProofOfWork{b, target}
+
+	return pow
 }
 
 func (pow *ProofOfWork) InitData(nonce int) []byte {
-
 	data := bytes.Join(
 		[][]byte{
 			pow.Block.PrevHash,
-			pow.Block.Data,
-			// nonce와 difficulty를 byte형태로 받음
+			pow.Block.HashTransactions(),
 			ToHex(int64(nonce)),
 			ToHex(int64(Difficulty)),
 		},
 		[]byte{},
 	)
+
 	return data
 }
 
@@ -58,8 +68,10 @@ func (pow *ProofOfWork) Run() (int, []byte) {
 		} else {
 			nonce++
 		}
+
 	}
 	fmt.Println()
+
 	return nonce, hash[:]
 }
 
@@ -75,14 +87,9 @@ func (pow *ProofOfWork) Validate() bool {
 }
 
 func ToHex(num int64) []byte {
-
 	buff := new(bytes.Buffer)
-	//BigEndian -> 큰 비트부터 작성 vs LittleEndian
-	//num을 이진표현으로 나타내는 함수
 	err := binary.Write(buff, binary.BigEndian, num)
+	Handle(err)
 
-	if err != nil {
-		log.Panic(err)
-	}
 	return buff.Bytes()
 }
