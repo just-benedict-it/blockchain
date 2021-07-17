@@ -13,9 +13,9 @@ import (
 	"runtime"
 	"syscall"
 
-	"gopkg.in/vrecan/death.v3"
+	"github.com/vrecan/death/v3"
 
-	"github.com/tensor-programming/golang-blockchain/blockchain"
+	blockchain "github.com/just-benedict-it/blockchain/blockchaingo"
 )
 
 const (
@@ -30,48 +30,49 @@ var (
 	KnownNodes      = []string{"localhost:3000"}
 	blocksInTransit = [][]byte{}
 	// key : blockchain ID
-	memoryPool      = make(map[string]blockchain.Transaction)
+	memoryPool = make(map[string]blockchain.Transaction)
 )
 
-type Addr struct{
+type Addr struct {
 	AddrList []string
 }
 
-type Block struct{
+type Block struct {
 	AddrFrom string
-	Block []byte
+	Block    []byte
 }
 
-type GetBlocks struct{
+type GetBlocks struct {
 	AddrFrom string
 }
 
-type GetData struct{
+type GetData struct {
 	AddrFrom string
-	Type string
-	ID []byte
+	Type     string
+	ID       []byte
 }
 
-type Inv struct{
+type Inv struct {
 	AddrFrom string
-	Type string
-	Items [][]byte
+	Type     string
+	Items    [][]byte
 }
 
-type Tx struct{
-	AddrFrom string
+type Tx struct {
+	AddrFrom    string
 	Transaction []byte
 }
 
-type Version struct{
-	Version int
+type Version struct {
+	Version    int
 	BestHeight int
-	AddrFrom string
+	AddrFrom   string
 }
-func CmdToBytes(cmd string) []byte{
+
+func CmdToBytes(cmd string) []byte {
 	var bytes [commandLength]byte
 
-	for i, c := range cmd{
+	for i, c := range cmd {
 		bytes[i] = byte(c)
 	}
 
@@ -136,7 +137,7 @@ func SendData(addr string, data []byte) {
 	}
 
 	defer conn.Close()
-
+	//copy data to conn
 	_, err = io.Copy(conn, bytes.NewReader(data))
 	if err != nil {
 		log.Panic(err)
